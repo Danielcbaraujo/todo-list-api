@@ -28,12 +28,30 @@ class TodoController {
 
 
     async update(req, res) {
-        const todoId = req.params.id;
-        const userId = req.user.id;
-        const data = req.body;
+        try {
+            const todoId = req.params.id;
+            const userId = req.user.id;
+            const data = req.body;
     
-        const todo = await TodoService.update(todoId, userId, data);
+            const todo = await TodoService.update(
+                todoId,
+                userId,
+                data
+            );
+    
+            return res.status(200).json(todo);
+    
+        } catch (error) {
+            const statusCode = error.statusCode || 500;
+    
+            return res.status(statusCode).json({
+                message: error.message
+            });
+        }
     }
 }
+
 export default new TodoController();
+
+
 

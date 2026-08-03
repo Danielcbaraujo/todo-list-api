@@ -13,9 +13,7 @@ class TodoService {
     
         return todo;
     }
-    
     async update(todoId, userId, data) {
-
         const result = await TodoRepository.update(
             todoId,
             userId,
@@ -23,10 +21,17 @@ class TodoService {
         );
     
         if (result.count === 0) {
-            throw new Error("Tarefa não encontrada");
+            const error = new Error("Tarefa não encontrada");
+            error.statusCode = 404;
+            throw error;
         }
     
-        return result;
+        const updatedTodo = await TodoRepository.findByIdAndUser(
+            todoId,
+            userId
+        );
+    
+        return updatedTodo;
     }
     }
 
