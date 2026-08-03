@@ -43,5 +43,7 @@ class UserRepository {
       data,
     });
   }
+
+
 }
 export default new UserRepository();

@@ -11,25 +11,29 @@ class TodoController {
     }
 
     async create(req, res) {
-        const data = req.body;
-        const userId = req.user.id;
-
-        const todo = await TodoService.create(data, userId);
-
-        return res.status(201).json(todo);
-    }
+        try {
+            const data = req.body;
+            const userId = req.user.id;
     
+            const todo = await TodoService.create(data, userId);
+    
+            return res.status(201).json(todo);
+    
+        } catch (error) {
+            return res.status(500).json({
+                message: "Erro ao criar tarefa"
+            });
+        }
     }
 
 
-
+    async update(req, res) {
+        const todoId = req.params.id;
+        const userId = req.user.id;
+        const data = req.body;
+    
+        const todo = await TodoService.update(todoId, userId, data);
+    }
+}
 export default new TodoController();
 
-
-
-
-
-
-
-
-export default new TodoController();
