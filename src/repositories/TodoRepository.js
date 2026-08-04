@@ -2,12 +2,14 @@
 import prisma from "../config/prisma.js";
 
 class TodoRepository {
-    async findAllByUser(userId) {
-        return prisma.todo.findMany({
-            where: {
-                userId
-            }
-        });
+    async findAll(req, res) {
+        try {
+            const userId = req.user.id;
+            const todos = await TodoService.findAll(userId);
+            return res.status(200).json(todos);
+        } catch (error) {
+            return res.status(500).json({ message: "Erro ao buscar tarefas" });
+        }
     }
 
     async create(data, userId) {

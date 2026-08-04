@@ -1,0 +1,99 @@
+@baseUrl = http://localhost:3000
+
+### ============================================
+### 1. REGISTRAR USUÁRIO
+### ============================================
+# @name register
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "name": "Maria Silva",
+  "email": "maria@email.com",
+  "password": "123456"
+}
+
+### ============================================
+### 2. LOGIN
+### O token da resposta é salvo automaticamente
+### na variável abaixo (usada nas próximas requisições)
+### ============================================
+# @name login
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "maria@email.com",
+  "password": "123456"
+}
+
+### Captura o token retornado no login
+@authToken = {{login.response.body.token}}
+
+
+### ============================================
+### 3. LISTAR TODOS (rota protegida)
+### ============================================
+GET {{baseUrl}}/todos
+Authorization: Bearer {{authToken}}
+
+
+### ============================================
+### 4. CRIAR TODO (rota protegida)
+### ============================================
+# @name createTodo
+POST {{baseUrl}}/todos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Estudar Node.js",
+  "description": "Revisar Express e Prisma",
+  "completed": false
+}
+
+### Captura o id do todo recém-criado
+@todoId = {{createTodo.response.body.id}}
+
+
+### ============================================
+### 5. ATUALIZAR TODO (rota protegida)
+### ============================================
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "completed": true
+}
+
+
+### ============================================
+### CASOS DE ERRO (para validar tratamento)
+### ============================================
+
+### Registrar com e-mail já existente -> deve retornar 409
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "name": "Outra Maria",
+  "email": "maria@email.com",
+  "password": "123456"
+}
+
+### Login com senha errada -> deve retornar 401
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "maria@email.com",
+  "password": "senhaErrada"
+}
+
+### Acessar rota protegida sem token -> deve retornar 401
+GET {{baseUrl}}/todos
+
+### Acessar rota protegida com token inválido -> deve retornar 401
+GET {{baseUrl}}/todos
+Authorization: Bearer token_invalido_123
