@@ -9,4 +9,5 @@ router.post("/", authMiddleware, todoController.create);
 router.put("/:id", authMiddleware, todoController.update);
 
 router.get("/", authMiddleware, todoController.findAll);
+
 export default router;

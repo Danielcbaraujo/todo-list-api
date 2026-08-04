@@ -1,9 +1,11 @@
-@baseUrl = https://ominous-adventure-4j799777qxqh7qp5-3000.app.github.dev
+```http
+@baseUrl = https://sturdy-waffle-wpxjv77v94qh9qv5-3000.app.github.dev
 
 ### ============================================
 ### 1. REGISTRAR USUÁRIO
 ### ============================================
 # @name register
+
 POST {{baseUrl}}/users/register
 Content-Type: application/json
 
@@ -13,12 +15,12 @@ Content-Type: application/json
   "password": "123456"
 }
 
+
 ### ============================================
 ### 2. LOGIN
-### O token da resposta é salvo automaticamente
-### na variável abaixo (usada nas próximas requisições)
 ### ============================================
 # @name login
+
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -32,16 +34,18 @@ Content-Type: application/json
 
 
 ### ============================================
-### 3. LISTAR TODOS (rota protegida)
+### 3. LISTAR TODOS
 ### ============================================
+
 GET {{baseUrl}}/todos
 Authorization: Bearer {{authToken}}
 
 
 ### ============================================
-### 4. CRIAR TODO (rota protegida)
+### 4. CRIAR TODO
 ### ============================================
 # @name createTodo
+
 POST {{baseUrl}}/todos
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -52,27 +56,59 @@ Authorization: Bearer {{authToken}}
   "completed": false
 }
 
-### Captura o id do todo recém-criado
+### Captura o ID da Todo criada
 @todoId = {{createTodo.response.body.id}}
 
 
 ### ============================================
-### 5. ATUALIZAR TODO (rota protegida)
+### 5. ATUALIZAR TODO — TÍTULO E DESCRIÇÃO
 ### ============================================
+
 PUT {{baseUrl}}/todos/{{todoId}}
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
+  "title": "Estudar Node.js e Prisma",
+  "description": "Revisar arquitetura, Express e Prisma",
+  "completed": false
+}
+
+
+### ============================================
+### 6. ATUALIZAR TODO — COMPLETED
+### ============================================
+
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Estudar Node.js e Prisma",
+  "description": "Revisar arquitetura, Express e Prisma",
   "completed": true
 }
 
 
 ### ============================================
-### CASOS DE ERRO (para validar tratamento)
+### 7. LISTAR NOVAMENTE
+### Confirma se a alteração foi persistida
 ### ============================================
 
-### Registrar com e-mail já existente -> deve retornar 409
+GET {{baseUrl}}/todos
+Authorization: Bearer {{authToken}}
+
+
+### ============================================
+### CASOS DE ERRO
+### ============================================
+
+
+### ============================================
+### 8. REGISTRAR E-MAIL JÁ EXISTENTE
+### Esperado: 409
+### ============================================
+
 POST {{baseUrl}}/users/register
 Content-Type: application/json
 
@@ -82,7 +118,12 @@ Content-Type: application/json
   "password": "123456"
 }
 
-### Login com senha errada -> deve retornar 401
+
+### ============================================
+### 9. LOGIN COM SENHA ERRADA
+### Esperado: 401
+### ============================================
+
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -91,9 +132,47 @@ Content-Type: application/json
   "password": "senhaErrada"
 }
 
-### Acessar rota protegida sem token -> deve retornar 401
+
+### ============================================
+### 10. ACESSAR ROTA PROTEGIDA SEM TOKEN
+### Esperado: 401
+### ============================================
+
 GET {{baseUrl}}/todos
 
-### Acessar rota protegida com token inválido -> deve retornar 401
+
+### ============================================
+### 11. ACESSAR ROTA PROTEGIDA COM TOKEN INVÁLIDO
+### Esperado: 401
+### ============================================
+
 GET {{baseUrl}}/todos
 Authorization: Bearer token_invalido_123
+
+
+### ============================================
+### 12. ATUALIZAR TODO INEXISTENTE
+### Esperado: 404
+### ============================================
+
+PUT {{baseUrl}}/todos/id-que-nao-existe
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Teste",
+  "description": "Todo inexistente",
+  "completed": true
+}
+
+### ============================================
+### 13. ATUALIZAÇÃO PARCIAL — SOMENTE COMPLETED
+### ============================================
+
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "completed": false
+}

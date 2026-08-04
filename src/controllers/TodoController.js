@@ -29,7 +29,7 @@ class TodoController {
 
     async update(req, res) {
         try {
-            const todoId = req.params.id;
+            const todoId = Number(req.params.id);
             const userId = req.user.id;
             const data = req.body;
     
