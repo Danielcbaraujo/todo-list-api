@@ -1,6 +1,5 @@
 ```http
 @baseUrl = https://sturdy-waffle-wpxjv77v94qh9qv5-3000.app.github.dev
-
 ### ============================================
 ### 1. REGISTRAR USUÁRIO
 ### ============================================
@@ -174,5 +173,5 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "completed": false
+  "completed": true
 }
