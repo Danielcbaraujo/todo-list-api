@@ -42,6 +42,15 @@ class TodoRepository {
             }
         });
     }
+
+    async delete(todoId, userId) {
+        return prisma.todo.deleteMany({
+            where: {
+                id: todoId,
+                userId
+            }
+        });
+    }
 }
 
 export default new TodoRepository();

@@ -1,5 +1,5 @@
 ```http
-@baseUrl = https://sturdy-waffle-wpxjv77v94qh9qv5-3000.app.github.dev
+@baseUrl =https://sturdy-waffle-wpxjv77v94qh9qv5-3000.app.github.dev
 ### ============================================
 ### 1. REGISTRAR USUÁRIO
 ### ============================================
@@ -50,9 +50,9 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Estudar Node.js",
-  "description": "Revisar Express e Prisma",
-  "completed": false
+  "title": "Estudar Zod",
+  "description": "Aprender validação",
+  "completed": "sim"
 }
 
 ### Captura o ID da Todo criada
@@ -63,7 +63,7 @@ Authorization: Bearer {{authToken}}
 ### 5. ATUALIZAR TODO — TÍTULO E DESCRIÇÃO
 ### ============================================
 
-PUT {{baseUrl}}/todos/{{todoId}}
+PUT {{baseUrl}}/todos/5
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -175,3 +175,12 @@ Authorization: Bearer {{authToken}}
 {
   "completed": true
 }
+
+
+### ============================================
+### 13. DELETAR TODO
+### Esperado: 200
+### ============================================
+
+DELETE {{baseUrl}}/todos/4
+Authorization: Bearer {{authToken}}

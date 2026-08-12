@@ -49,9 +49,34 @@ class TodoController {
             });
         }
     }
+    
+    async delete(req, res) {
+    try {
+        console.log("PARAMS:", req.params);
+        console.log("ID:", req.params.id);
+
+        const todoId = Number(req.params.id);
+        const userId = req.user.id;
+
+        console.log("todoId:", todoId);
+        console.log("userId:", userId);
+
+        const result = await TodoService.delete(todoId, userId);
+
+        return res.status(200).json(result);
+
+    } catch (error) {
+        const statusCode = error.statusCode || 500;
+
+        return res.status(statusCode).json({
+            message: error.message
+        });
+    }
 }
 
-export default new TodoController();
+
+}
+export  default new TodoController();
 
 
 

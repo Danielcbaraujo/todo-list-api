@@ -35,6 +35,19 @@ class TodoService {
 
         return updatedTodo;
     }
+
+    async delete(todoId, userId) {
+        const result = await TodoRepository.delete(todoId, userId);
+
+        if (result.count === 0) {
+            const error = new Error("Tarefa não encontrada");
+            error.statusCode = 404;
+
+            throw error;
+        }
+
+        return { message: "Tarefa deletada com sucesso" };
+    }
 }
 
 export default new TodoService();
