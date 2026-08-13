@@ -50,9 +50,9 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Estudar Zod",
-  "description": "Aprender validação",
-  "completed": "sim"
+    "title": "Testar error middleware",
+    "description": "Testando a API",
+    "completed": false
 }
 
 ### Captura o ID da Todo criada
@@ -63,14 +63,13 @@ Authorization: Bearer {{authToken}}
 ### 5. ATUALIZAR TODO — TÍTULO E DESCRIÇÃO
 ### ============================================
 
-PUT {{baseUrl}}/todos/5
+PUT {{baseUrl}}/todos/4
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Estudar Node.js e Prisma",
-  "description": "Revisar arquitetura, Express e Prisma",
-  "completed": false
+  "title": "Estudar Zod",
+  "banana": "teste"
 }
 
 
@@ -182,5 +181,5 @@ Authorization: Bearer {{authToken}}
 ### Esperado: 200
 ### ============================================
 
-DELETE {{baseUrl}}/todos/4
+DELETE {{baseUrl}}/todos/6
 Authorization: Bearer {{authToken}}

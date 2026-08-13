@@ -1,5 +1,4 @@
 const validate = (schema) => {
-
     return (req, res, next) => {
 
         const result = schema.safeParse(req.body);
@@ -10,9 +9,11 @@ const validate = (schema) => {
                 errors: result.error.issues
             });
         }
-         next();
-    };
 
+        req.body = result.data;
+
+        next();
+    };
 };
 
-export default validate
+export default validate;

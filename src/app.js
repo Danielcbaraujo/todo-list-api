@@ -1,10 +1,15 @@
 import express from "express";
 import userRoutes from "./routes/UserRoutes.js";
 import todoRoutes from "./routes/TodoRoutes.js";
+import errorMiddleware from "./middlewares/errorMiddleware.js";
+
 const app = express();
 
 app.use(express.json());
 
-app.use("/users",userRoutes)
+app.use("/users", userRoutes);
 app.use("/todos", todoRoutes);
+
+app.use(errorMiddleware);
+
 export default app;
