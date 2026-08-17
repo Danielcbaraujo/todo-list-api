@@ -2,14 +2,27 @@ import prisma from "../config/prisma.js";
 
 class TodoRepository {
 
-    async findAll(userId) {
-        return prisma.todo.findMany({
-            where: {
-                userId
-            }
-        });
-    }
+async findAll(userId, skip, limit) {
 
+    const todos = await prisma.todo.findMany({
+        where: {
+            userId
+        },
+        skip,
+        take: limit
+    });
+
+    const total = await prisma.todo.count({
+        where: {
+            userId
+        }
+    });
+
+    return {
+        todos,
+        total
+    };
+}
     async create(data, userId) {
         return prisma.todo.create({
             data: {

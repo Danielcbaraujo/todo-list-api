@@ -2,6 +2,8 @@ import AppError from "../errors/AppError.js";
 
 const errorMiddleware = (error, req, res, next) => {
 
+    console.error("ERRO COMPLETO:", error);
+
     let statusCode;
     let message;
 

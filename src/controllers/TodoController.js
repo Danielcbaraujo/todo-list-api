@@ -3,12 +3,20 @@ import TodoService from "../services/TodoService.js";
 class TodoController {
 
     async findAll(req, res) {
-        const userId = req.user.id;
 
-        const todos = await TodoService.findAll(userId);
+    const userId = req.user.id;
 
-        return res.status(200).json(todos);
-    }
+    const page = Number(req.query.page);
+    const limit = Number(req.query.limit);
+
+    const todos = await TodoService.findAll(
+        userId,
+        page,
+        limit
+    );
+
+    return res.status(200).json(todos);
+}
 
     async create(req, res) {
         const data = req.body;

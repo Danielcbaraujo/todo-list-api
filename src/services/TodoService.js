@@ -4,11 +4,23 @@ import AppError from "../errors/AppError.js";
 
 class TodoService {
 
-    async findAll(userId) {
-        const todos = await TodoRepository.findAll(userId);
-        
-        return todos;
-    }
+async findAll(userId, page, limit) {
+
+    const skip = (page - 1) * limit;
+
+    const result = await TodoRepository.findAll(
+        userId,
+        skip,
+        limit
+    );
+
+    return {
+        data: result.todos,
+        page,
+        limit,
+        total: result.total
+    };
+}
 
     async create(data, userId) {
          

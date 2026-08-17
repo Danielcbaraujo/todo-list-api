@@ -1,9 +1,12 @@
-```http
-@baseUrl =https://sturdy-waffle-wpxjv77v94qh9qv5-3000.app.github.dev
-### ============================================
-### 1. REGISTRAR USUÁRIO
-### ============================================
-# @name register
+@baseUrl = https://sturdy-waffle-wpxjv77v94qh9qv5-3000.app.github.dev
+
+
+### ============================================================
+### 1. REGISTRAR USUÁRIO — MARIA
+### Esperado: 201
+### ============================================================
+
+# @name registerMaria
 
 POST {{baseUrl}}/users/register
 Content-Type: application/json
@@ -15,10 +18,12 @@ Content-Type: application/json
 }
 
 
-### ============================================
-### 2. LOGIN
-### ============================================
-# @name login
+### ============================================================
+### 2. LOGIN — MARIA
+### Esperado: 200
+### ============================================================
+
+# @name loginMaria
 
 POST {{baseUrl}}/users/login
 Content-Type: application/json
@@ -28,21 +33,26 @@ Content-Type: application/json
   "password": "123456"
 }
 
-### Captura o token retornado no login
-@authToken = {{login.response.body.token}}
+
+###
+# Token da Maria
+@authToken = {{loginMaria.response.body.token}}
 
 
-### ============================================
-### 3. LISTAR TODOS
-### ============================================
+### ============================================================
+### 3. LISTAR TODOS — MARIA
+### Esperado: 200
+### ============================================================
 
-GET {{baseUrl}}/todos
+GET {{baseUrl}}/todos?page=2&limit=2
 Authorization: Bearer {{authToken}}
 
 
-### ============================================
-### 4. CRIAR TODO
-### ============================================
+### ============================================================
+### 4. CRIAR TODO — MARIA
+### Esperado: 201
+### ============================================================
+
 # @name createTodo
 
 POST {{baseUrl}}/todos
@@ -50,32 +60,37 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-    "title": "Testar error middleware",
-    "description": "Testando a API",
-    "completed": false
+  "title": "Testar error middleware",
+  "description": "Testando a API",
+  "completed": false
 }
 
-### Captura o ID da Todo criada
+
+###
+# ID da tarefa criada pela Maria
 @todoId = {{createTodo.response.body.id}}
 
 
-### ============================================
-### 5. ATUALIZAR TODO — TÍTULO E DESCRIÇÃO
-### ============================================
+### ============================================================
+### 5. ATUALIZAR TODO — MARIA
+### Esperado: 200
+### ============================================================
 
-PUT {{baseUrl}}/todos/4
+PUT {{baseUrl}}/todos/{{todoId}}
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
   "title": "Estudar Zod",
-  "banana": "teste"
+  "description": "Estudar validação",
+  "completed": false
 }
 
 
-### ============================================
+### ============================================================
 ### 6. ATUALIZAR TODO — COMPLETED
-### ============================================
+### Esperado: 200
+### ============================================================
 
 PUT {{baseUrl}}/todos/{{todoId}}
 Content-Type: application/json
@@ -88,24 +103,20 @@ Authorization: Bearer {{authToken}}
 }
 
 
-### ============================================
+### ============================================================
 ### 7. LISTAR NOVAMENTE
 ### Confirma se a alteração foi persistida
-### ============================================
+### Esperado: 200
+### ============================================================
 
 GET {{baseUrl}}/todos
 Authorization: Bearer {{authToken}}
 
 
-### ============================================
-### CASOS DE ERRO
-### ============================================
-
-
-### ============================================
+### ============================================================
 ### 8. REGISTRAR E-MAIL JÁ EXISTENTE
 ### Esperado: 409
-### ============================================
+### ============================================================
 
 POST {{baseUrl}}/users/register
 Content-Type: application/json
@@ -117,10 +128,10 @@ Content-Type: application/json
 }
 
 
-### ============================================
+### ============================================================
 ### 9. LOGIN COM SENHA ERRADA
 ### Esperado: 401
-### ============================================
+### ============================================================
 
 POST {{baseUrl}}/users/login
 Content-Type: application/json
@@ -131,41 +142,43 @@ Content-Type: application/json
 }
 
 
-### ============================================
+### ============================================================
 ### 10. ACESSAR ROTA PROTEGIDA SEM TOKEN
 ### Esperado: 401
-### ============================================
+### ============================================================
 
 GET {{baseUrl}}/todos
 
 
-### ============================================
+### ============================================================
 ### 11. ACESSAR ROTA PROTEGIDA COM TOKEN INVÁLIDO
 ### Esperado: 401
-### ============================================
+### ============================================================
 
 GET {{baseUrl}}/todos
 Authorization: Bearer token_invalido_123
 
 
-### ============================================
+### ============================================================
 ### 12. ATUALIZAR TODO INEXISTENTE
 ### Esperado: 404
-### ============================================
+### ============================================================
 
-PUT {{baseUrl}}/todos/id-que-nao-existe
+PUT {{baseUrl}}/todos/999
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Teste",
+  "title": "Test",
   "description": "Todo inexistente",
   "completed": true
 }
 
-### ============================================
+
+### ============================================================
 ### 13. ATUALIZAÇÃO PARCIAL — SOMENTE COMPLETED
-### ============================================
+### Esperado: 200
+### ============================================================
 
 PUT {{baseUrl}}/todos/{{todoId}}
 Content-Type: application/json
@@ -176,10 +189,105 @@ Authorization: Bearer {{authToken}}
 }
 
 
-### ============================================
-### 13. DELETAR TODO
-### Esperado: 200
-### ============================================
+### ============================================================
+### 14. DADOS INVÁLIDOS — COMPLETED COMO STRING
+### Esperado: 400
+### ============================================================
 
-DELETE {{baseUrl}}/todos/6
+POST {{baseUrl}}/todos
+Content-Type: application/json
 Authorization: Bearer {{authToken}}
+
+{
+  "title": "Teste Zod",
+  "description": "Testando validação",
+  "completed": "true"
+}
+
+
+### ============================================================
+### 15. REGISTRAR SEGUNDO USUÁRIO — JOÃO
+### Esperado: 201
+### ============================================================
+
+# @name registerJoao
+
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "password": "123456"
+}
+
+
+### ============================================================
+### 16. LOGIN — JOÃO
+### Esperado: 200
+### ============================================================
+
+# @name loginJoao
+
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "joao@email.com",
+  "password": "123456"
+}
+
+
+###
+# Token do João
+@joaoToken = {{loginJoao.response.body.token}}
+
+
+### ============================================================
+### 17. JOÃO TENTA ALTERAR TODO DA MARIA
+### Esperado: 404
+### ============================================================
+
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: application/json
+Authorization: Bearer {{joaoToken}}
+
+{
+  "title": "João tentando alterar",
+  "description": "Não deveria conseguir",
+  "completed": true
+}
+
+
+### ============================================================
+### 18. JOÃO TENTA DELETAR TODO DA MARIA
+### Esperado: 404
+### ============================================================
+
+DELETE {{baseUrl}}/todos/{{todoId}}
+Authorization: Bearer {{joaoToken}}
+
+
+### ============================================================
+### 19. MARIA DELETA SUA PRÓPRIA TAREFA
+### Esperado: 200
+### ============================================================
+
+DELETE {{baseUrl}}/todos/{{todoId}}
+Authorization: Bearer {{authToken}}
+
+
+### ============================================================
+### 20. MARIA TENTA ALTERAR A TAREFA DELETADA
+### Esperado: 404
+### ============================================================
+
+PUT {{baseUrl}}/todos/{{todoId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Tentando alterar tarefa deletada",
+  "description": "Não deveria existir",
+  "completed": true
+}
