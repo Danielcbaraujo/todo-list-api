@@ -2,38 +2,57 @@ import prisma from "../config/prisma.js";
 
 class TodoRepository {
 
-async findAll(userId, skip, limit) {
-
-    const todos = await prisma.todo.findMany({
-        where: {
-            userId
-        },
+    async findAll(
+        userId,
         skip,
-        take: limit
-    });
+        limit,
+        filter,
+        sortBy,
+        order
+    ) {
 
-    const total = await prisma.todo.count({
-        where: {
-            userId
-        }
-    });
+        const todos = await prisma.todo.findMany({
+            where: {
+                userId,
+                ...filter
+            },
 
-    return {
-        todos,
-        total
-    };
-}
+            skip,
+
+            take: limit,
+
+            orderBy: {
+                [sortBy]: order
+            }
+        });
+
+        const total = await prisma.todo.count({
+            where: {
+                userId,
+                ...filter
+            }
+        });
+
+        return {
+            todos,
+            total
+        };
+    }
+
     async create(data, userId) {
+
         return prisma.todo.create({
             data: {
                 title: data.title,
                 description: data.description,
+                completed: data.completed,
                 userId
             }
         });
     }
 
     async findByIdAndUser(todoId, userId) {
+
         return prisma.todo.findFirst({
             where: {
                 id: todoId,
@@ -43,11 +62,13 @@ async findAll(userId, skip, limit) {
     }
 
     async update(todoId, userId, data) {
+
         return prisma.todo.updateMany({
             where: {
                 id: todoId,
                 userId
             },
+
             data: {
                 title: data.title,
                 description: data.description,
@@ -57,6 +78,7 @@ async findAll(userId, skip, limit) {
     }
 
     async delete(todoId, userId) {
+
         return prisma.todo.deleteMany({
             where: {
                 id: todoId,

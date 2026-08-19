@@ -36,7 +36,7 @@ Content-Type: application/json
 
 ###
 # Token da Maria
-@authToken = {{loginMaria.response.body.token}}
+@authToken = {{loginMaria.response.body.$.token}}
 
 
 ### ============================================================
@@ -44,7 +44,7 @@ Content-Type: application/json
 ### Esperado: 200
 ### ============================================================
 
-GET {{baseUrl}}/todos?page=2&limit=2
+GET {{baseUrl}}/todos
 Authorization: Bearer {{authToken}}
 
 
@@ -60,15 +60,15 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Testar error middleware",
-  "description": "Testando a API",
+  "title": "Teste criação",
+  "description": "Testando criação",
   "completed": false
 }
 
 
 ###
 # ID da tarefa criada pela Maria
-@todoId = {{createTodo.response.body.id}}
+@todoId = {{createTodo.response.body.$.id}}
 
 
 ### ============================================================
@@ -114,7 +114,37 @@ Authorization: Bearer {{authToken}}
 
 
 ### ============================================================
-### 8. REGISTRAR E-MAIL JÁ EXISTENTE
+### 8. FILTRO — TAREFAS CONCLUÍDAS
+### Esperado: 200
+### Deve retornar somente completed = true
+### ============================================================
+
+GET {{baseUrl}}/todos?page=1&limit=10&completed=true
+Authorization: Bearer {{authToken}}
+
+
+### ============================================================
+### 9. FILTRO — TAREFAS PENDENTES
+### Esperado: 200
+### Deve retornar somente completed = false
+### ============================================================
+
+GET {{baseUrl}}/todos?page=1&limit=10&completed=false
+Authorization: Bearer {{authToken}}
+
+
+### ============================================================
+### 10. SEM FILTRO — TODAS AS TAREFAS
+### Esperado: 200
+### Deve retornar todas as tarefas da Maria
+### ============================================================
+
+GET {{baseUrl}}/todos?page=1&limit=20
+Authorization: Bearer {{authToken}}
+
+
+### ============================================================
+### 11. REGISTRAR E-MAIL JÁ EXISTENTE
 ### Esperado: 409
 ### ============================================================
 
@@ -129,7 +159,7 @@ Content-Type: application/json
 
 
 ### ============================================================
-### 9. LOGIN COM SENHA ERRADA
+### 12. LOGIN COM SENHA ERRADA
 ### Esperado: 401
 ### ============================================================
 
@@ -143,7 +173,7 @@ Content-Type: application/json
 
 
 ### ============================================================
-### 10. ACESSAR ROTA PROTEGIDA SEM TOKEN
+### 13. ACESSAR ROTA PROTEGIDA SEM TOKEN
 ### Esperado: 401
 ### ============================================================
 
@@ -151,7 +181,7 @@ GET {{baseUrl}}/todos
 
 
 ### ============================================================
-### 11. ACESSAR ROTA PROTEGIDA COM TOKEN INVÁLIDO
+### 14. ACESSAR ROTA PROTEGIDA COM TOKEN INVÁLIDO
 ### Esperado: 401
 ### ============================================================
 
@@ -160,7 +190,7 @@ Authorization: Bearer token_invalido_123
 
 
 ### ============================================================
-### 12. ATUALIZAR TODO INEXISTENTE
+### 15. ATUALIZAR TODO INEXISTENTE
 ### Esperado: 404
 ### ============================================================
 
@@ -176,7 +206,7 @@ Authorization: Bearer {{authToken}}
 
 
 ### ============================================================
-### 13. ATUALIZAÇÃO PARCIAL — SOMENTE COMPLETED
+### 16. ATUALIZAÇÃO PARCIAL — SOMENTE COMPLETED
 ### Esperado: 200
 ### ============================================================
 
@@ -190,7 +220,7 @@ Authorization: Bearer {{authToken}}
 
 
 ### ============================================================
-### 14. DADOS INVÁLIDOS — COMPLETED COMO STRING
+### 17. DADOS INVÁLIDOS — COMPLETED COMO STRING
 ### Esperado: 400
 ### ============================================================
 
@@ -206,7 +236,27 @@ Authorization: Bearer {{authToken}}
 
 
 ### ============================================================
-### 15. REGISTRAR SEGUNDO USUÁRIO — JOÃO
+### 18. TESTE — CAMPO DE ORDENAÇÃO INVÁLIDO
+### Esperado: 400
+### sortBy=password não é permitido
+### ============================================================
+
+GET {{baseUrl}}/todos?page=1&limit=10&sortBy=password&order=asc
+Authorization: Bearer {{authToken}}
+
+
+### ============================================================
+### 19. TESTE — ORDEM DE ORDENAÇÃO INVÁLIDA
+### Esperado: 400
+### order=banana não é permitido
+### ============================================================
+
+GET {{baseUrl}}/todos?page=1&limit=10&sortBy=title&order=banana
+Authorization: Bearer {{authToken}}
+
+
+### ============================================================
+### 20. REGISTRAR SEGUNDO USUÁRIO — JOÃO
 ### Esperado: 201
 ### ============================================================
 
@@ -223,7 +273,7 @@ Content-Type: application/json
 
 
 ### ============================================================
-### 16. LOGIN — JOÃO
+### 21. LOGIN — JOÃO
 ### Esperado: 200
 ### ============================================================
 
@@ -240,11 +290,11 @@ Content-Type: application/json
 
 ###
 # Token do João
-@joaoToken = {{loginJoao.response.body.token}}
+@joaoToken = {{loginJoao.response.body.$.token}}
 
 
 ### ============================================================
-### 17. JOÃO TENTA ALTERAR TODO DA MARIA
+### 22. JOÃO TENTA ALTERAR TODO DA MARIA
 ### Esperado: 404
 ### ============================================================
 
@@ -260,29 +310,29 @@ Authorization: Bearer {{joaoToken}}
 
 
 ### ============================================================
-### 18. JOÃO TENTA DELETAR TODO DA MARIA
+### 23. JOÃO TENTA DELETAR TODO DA MARIA
 ### Esperado: 404
 ### ============================================================
 
-DELETE {{baseUrl}}/todos/{{todoId}}
+DELETE {{baseUrl}}/todos
 Authorization: Bearer {{joaoToken}}
 
 
 ### ============================================================
-### 19. MARIA DELETA SUA PRÓPRIA TAREFA
-### Esperado: 200
+### 24. MARIA DELETA SUA PRÓPRIA TAREFA
+### Esperado: 204
 ### ============================================================
 
-DELETE {{baseUrl}}/todos/{{todoId}}
+DELETE {{baseUrl}}/todos/6
 Authorization: Bearer {{authToken}}
 
 
 ### ============================================================
-### 20. MARIA TENTA ALTERAR A TAREFA DELETADA
+### 25. MARIA TENTA ALTERAR A TAREFA DELETADA
 ### Esperado: 404
 ### ============================================================
 
-PUT {{baseUrl}}/todos/{{todoId}}
+PUT {{baseUrl}}/todos/6
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
